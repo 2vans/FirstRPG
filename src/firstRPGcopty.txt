@@ -1,0 +1,82 @@
+* MainClass.cpp
+ *
+ *  Created on: 25 sty 2016
+ *      Author: Michau
+ */
+
+#include "MainClass.h"
+
+namespace michalProgramming {
+
+MainClass::MainClass() {
+
+	m_quit = true;
+
+	if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
+		m_quit = false;
+	}
+	// init of windwo
+	m_window = SDL_CreateWindow("FirstRPG",
+	SDL_WINDOWPOS_CENTERED,
+	SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_RESIZABLE);
+	//checking for error in initialization;
+	if (m_window == NULL) {
+		m_quit = false;
+	}
+
+	//creating renderer
+	m_renderer = SDL_CreateRenderer(m_window, -1, SDL_RENDERER_PRESENTVSYNC);
+	//checkin if renderer is initialized.
+	if (m_renderer == NULL) {
+		SDL_DestroyWindow (m_window);
+		SDL_Quit();
+		m_quit = false;
+	}
+
+	m_grassImage = IMG_LoadTexture(m_renderer, "Assets/background.bmp");
+	if (m_grassImage == NULL) {
+		m_quit = false;
+	}
+
+	m_grassRect.x = 0;
+	m_grassRect.y = 0;
+	m_grassRect.h = 600;
+	m_grassRect.w = 800;
+
+	m_playerImage = IMG_LoadTexture(m_renderer, "Assets/playerCharacter.png");
+	if (m_grassImage == NULL) {
+		m_quit = false;
+	}
+
+	m_playerRect.x = 400;
+	m_playerRect.y = 300;
+	m_playerRect.h = 100;
+	m_playerRect.w = 90;
+}
+
+void MainClass::gameLoop() {
+	while (m_quit) {
+
+			while (SDL_PollEvent(&m_event)) {
+				if (m_event.type == SDL_QUIT) {
+					m_quit = false;
+				}
+			}
+
+			SDL_RenderClear(m_renderer);
+			SDL_RenderCopy(m_renderer, m_grassImage, NULL, &m_grassRect);
+			SDL_RenderCopy(m_renderer, m_playerImage, NULL, &m_playerRect);
+			SDL_RenderPresent(m_renderer);
+
+		}
+}
+
+MainClass::~MainClass() {
+	SDL_DestroyTexture (m_grassImage);
+	SDL_DestroyTexture (m_playerImage);
+	SDL_DestroyRenderer (m_renderer);
+	SDL_DestroyWindow (m_window);
+	SDL_Quit();
+}
+
+} /* namespace michalProgramming */
